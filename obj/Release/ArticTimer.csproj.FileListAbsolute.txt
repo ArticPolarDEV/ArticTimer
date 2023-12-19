@@ -1,0 +1,13 @@
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\bin\Release\DEFAULT.TTF
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\bin\Release\ArticTimer.exe.config
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\bin\Release\ArticTimer.exe
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\bin\Release\ArticTimer.pdb
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.csproj.AssemblyReference.cache
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.Main.resources
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.Properties.Resources.resources
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.TimerForm.resources
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.csproj.GenerateResource.cache
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.csproj.CoreCompileInputs.cache
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.exe
+C:\Users\Servidor\source\repos\ArticTimer\ArticTimer\obj\Release\ArticTimer.pdb

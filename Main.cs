@@ -5,6 +5,7 @@ namespace ArticTimer
 {
     public partial class Main : Form
     {
+        private TimerForm timerForm;
         public Main()
         {
             InitializeComponent();
@@ -14,54 +15,60 @@ namespace ArticTimer
         {
             DisplayLib.showAvailableDisplays(DisplayCombo);
         }
-
-        private void bunifuImageButton1_Click(object sender, EventArgs e)
-        {
-            Environment.Exit(1);
-
-        }
-
         private void StartTimer(object sender, EventArgs e)
         {
-            // Get the selected item from the ComboBox
-            string selectedItem = DisplayCombo.SelectedItem as string;
-
-            // Extract the numeric part from the selected item
-            if (selectedItem != null && selectedItem.StartsWith("DISPLAY"))
+            try
             {
-                string numericPart = selectedItem.Replace("DISPLAY", "");
+                string selectedItem = DisplayCombo.SelectedItem as string;
 
-                // Convert the numeric part to an integer
-                if (int.TryParse(numericPart, out int monitorNumber))
+                if (selectedItem != null && selectedItem.StartsWith("DISPLAY"))
                 {
-                    // Call the method in DisplayLib
-                    string backgroundImagePath = bunifuTextBox1.Text;
+                    string numericPart = selectedItem.Replace("DISPLAY", "");
 
-                    int[] timerValues = GetTimerValues();
-
-                    // Add debugging messages
-                    Console.WriteLine($"Timer Values: {timerValues[0]} hours, {timerValues[1]} minutes, {timerValues[2]} seconds");
-
-                    if (string.IsNullOrEmpty(backgroundImagePath))
+                    if (int.TryParse(numericPart, out int monitorNumber))
                     {
-                        DisplayLib.showOnMonitor(monitorNumber, new TimerForm(timerValues[0], timerValues[1], timerValues[2], bgImage: null));
+                        string backgroundImagePath = BgPathTxt.Text;
+                        int[] timerValues = GetTimerValues();
+
+                        Console.WriteLine($"Timer Values: {timerValues[0]} hours, {timerValues[1]} minutes, {timerValues[2]} seconds");
+                        StartTimerBtn.Enabled = false;
+                        CloseTimer.Enabled = true;
+                        ResumeBtn.Enabled = true;
+                        PauseBtn.Enabled = true;
+                        if (string.IsNullOrEmpty(backgroundImagePath))
+                        {
+                            timerForm = CreateTimerForm(timerValues, null);
+                            DisplayLib.showOnMonitor(monitorNumber, timerForm);
+                        }
+                        else
+                        {
+                            timerForm = CreateTimerForm(timerValues, backgroundImagePath);
+                            DisplayLib.showOnMonitor(monitorNumber, timerForm);
+                        }
                     }
                     else
                     {
-                        DisplayLib.showOnMonitor(monitorNumber, new TimerForm(timerValues[0], timerValues[1], timerValues[2], bgImage: backgroundImagePath));
+                        MessageBox.Show("Falha ao converter a parte numérica para um inteiro.");
                     }
                 }
                 else
                 {
-                    // Handle the case where conversion fails
-                    MessageBox.Show("Failed to convert numeric part to an integer.");
+                    MessageBox.Show("Seleção inválida.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                // Handle the case where the selected item doesn't start with "DISPLAY"
-                MessageBox.Show("Invalid selection.");
+                MessageBox.Show("Erro: " + ex.Message);
             }
+        }
+
+
+        private TimerForm CreateTimerForm(int[] timerValues, string backgroundImagePath)
+        {
+            string hexColor = HexColorTxt.Text;
+            string TimerFontPath = TimerFontTxt.Text;
+            int[] axis = GetAxis();
+            return new TimerForm(timerValues[0], timerValues[1], timerValues[2], axis, backgroundImagePath, hexColor, TimerFontPath);
         }
 
         private int[] GetTimerValues()
@@ -73,28 +80,20 @@ namespace ArticTimer
                 int.Parse(secondsNmb.Value.ToString())
             };
         }
-        private void bunifuButton1_Click(object sender, EventArgs e)
+        private int[] GetAxis()
         {
-        }
-
-        private void bgImgCheckbox_func(object sender, EventArgs e)
-        {
-            if (bgImgCheckbox.Checked)
+            return new int[]
             {
-                bunifuPanel4.Visible = true;
-            }
-            else
-            {
-                bunifuPanel4.Visible = false;
-            }
+                int.Parse(XAxis.Value.ToString()),
+                int.Parse(YAxis.Value.ToString())
+            };
         }
-
         private void OpenBgImage_func(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.gif;*.bmp";
-
+                ofd.Multiselect = false;
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     // Get the selected file name and display it
@@ -102,8 +101,74 @@ namespace ArticTimer
 
                     // Now you can do something with the selected file, like setting it as a background image
                     // For example, if you have a PictureBox named pictureBox1:
-                    bunifuTextBox1.Text = fileName;
+                    BgPathTxt.Text = fileName;
                 }
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Font Files|*.ttf;*.otf";
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    // Get the selected file name and display it
+                    string fileName = ofd.FileName;
+
+                    // Now you can do something with the selected file, like setting it as a background image
+                    // For example, if you have a PictureBox named pictureBox1:
+                    TimerFontTxt.Text = fileName;
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            StartTimerBtn.Enabled = true;
+            CloseTimer.Enabled = false;
+            ResumeBtn.Enabled = false;
+            PauseBtn.Enabled = false;
+            // Verifique se a instância da TimerForm foi criada e não foi descartada
+            if (timerForm != null && !timerForm.IsDisposed)
+            {
+                // Chame o método StopAll na TimerForm
+                timerForm.StopAll();
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            DisplayCombo.Items.Clear();
+            OnLoad();
+        }
+
+        private void ResumeBtn_Click(object sender, EventArgs e)
+        {
+            StartTimerBtn.Enabled = false;
+            CloseTimer.Enabled = true;
+            ResumeBtn.Enabled = false;
+            PauseBtn.Enabled = true;
+            // Verifique se a instância da TimerForm foi criada e não foi descartada
+            if (timerForm != null && !timerForm.IsDisposed)
+            {
+                // Chame o método StopAll na TimerForm
+                timerForm.Resume();
+            }
+        }
+
+        private void PauseBtn_Click(object sender, EventArgs e)
+        {
+            StartTimerBtn.Enabled = false;
+            CloseTimer.Enabled = true;
+            ResumeBtn.Enabled = true;
+            PauseBtn.Enabled = false;
+            // Verifique se a instância da TimerForm foi criada e não foi descartada
+            if (timerForm != null && !timerForm.IsDisposed)
+            {
+                // Chame o método StopAll na TimerForm
+                timerForm.Pause();
             }
         }
     }

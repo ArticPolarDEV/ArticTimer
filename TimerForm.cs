@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing.Text;
+using System.IO;
 
 namespace ArticTimer
 {
@@ -16,101 +17,128 @@ namespace ArticTimer
     {
         private int horas, minutos, segundos;
         private Timer timer = new Timer();
-        public TimerForm(int hour, int minutes, int seconds, string bgImage = null)
+        public TimerForm(int hour, int minutes, int seconds, int[] Axis, string bgImage = null, string HexColor = "#ffffff", string FontPATH = null)
         {
             InitializeComponent();
-            ConfigLabelFont(hour, minutes, seconds);
+            ConfigLabelFont(hour, minutes, seconds, HexColor, FontPATH);
             startTemporizer();
             setBackgroundImage(bgImage);
+            setTimerAxis(Axis);
+            TopMostConfig();
         }
-        public void ConfigLabelFont(int hour, int minutes, int seconds)
+        public void ConfigLabelFont(int hour, int minutes, int seconds, string HexColor, string FontPath)
         {
-            //Create your private font collection object.
-            PrivateFontCollection pfc = new PrivateFontCollection();
+            try
+            {
+                PrivateFontCollection pfc = new PrivateFontCollection();
+                FontFamily fontFamily;
 
-            //Select your font from the resources.
-            //My font here is "Digireu.ttf"
-            int fontLength = Properties.Resources.DS_DIGIB.Length;
+                if (!string.IsNullOrEmpty(FontPath))
+                {
+                    pfc.AddFontFile(FontPath);
+                    fontFamily = pfc.Families[0];
+                }
+                else
+                {
+                    pfc.AddFontFile(Path.Combine(Application.StartupPath, "DEFAULT.TTF"));
+                    fontFamily = pfc.Families[0];
+                }
 
-            // create a buffer to read in to
-            byte[] fontdata = Properties.Resources.DS_DIGIB;
+                Font DefaultFont = new Font(fontFamily, TimerLbl.Font.Size, FontStyle.Regular);
+                TimerLbl.Font = DefaultFont;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message);
+            }
 
-            // create an unsafe memory block for the font data
-            System.IntPtr data = Marshal.AllocCoTaskMem(fontLength);
-
-            // copy the bytes to the unsafe memory block
-            Marshal.Copy(fontdata, 0, data, fontLength);
-
-            // pass the font to the font collection
-            pfc.AddMemoryFont(data, fontLength);
-
-            //After that we can create font and assign font to label
-            TimerLbl.Font = new Font(pfc.Families[0], TimerLbl.Font.Size);
-            string TimerText = hour.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
+            string TimerText = $"{hour:D2}:{minutes:D2}:{seconds:D2}";
             TimerLbl.Text = TimerText;
+            Color color = HexToColor(HexColor);
+            TimerLbl.ForeColor = color;
         }
 
+        private Color HexToColor(string hex)
+        {
+            // Remova o caractere '#' se estiver presente
+            if (hex.StartsWith("#"))
+                hex = hex.Substring(1);
+
+            // Converte a string hex em um objeto Color
+            return ColorTranslator.FromHtml("#" + hex);
+        }
         private void startTemporizer()
         {
-            // Obter a string do tempo da label (assumindo que é "1:50:30")
-            string tempoLabel = TimerLbl.Text;
+            try
+            {
+                string tempoLabel = TimerLbl.Text;
+                string[] partesTempo = tempoLabel.Split(':');
 
-            // Dividir a string em horas, minutos e segundos
-            string[] partesTempo = tempoLabel.Split(':');
-            if (partesTempo.Length == 3 &&
-                int.TryParse(partesTempo[0], out horas) &&
-                int.TryParse(partesTempo[1], out minutos) &&
-                int.TryParse(partesTempo[2], out segundos))
-            {
-                // Iniciar o Timer
-                timer.Interval = 1000; // 1 segundo
-                timer.Tick += TimerTick;
-                timer.Start();
+                if (partesTempo.Length == 3 &&
+                    int.TryParse(partesTempo[0], out horas) &&
+                    int.TryParse(partesTempo[1], out minutos) &&
+                    int.TryParse(partesTempo[2], out segundos))
+                {
+                    timer.Interval = 1000;
+                    timer.Tick += TimerTick;
+                    timer.Start();
+                }
+                else
+                {
+                    MessageBox.Show("Formato de tempo inválido na label.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Formato de tempo inválido na label.");
+                MessageBox.Show("Erro ao iniciar o temporizador: " + ex.Message);
             }
         }
+
         private void TimerTick(object sender, EventArgs e)
         {
             try
             {
-                // Decrementar os segundos
                 segundos--;
 
-                // Verificar se precisamos ajustar minutos/horas
                 if (segundos < 0)
                 {
-                    minutos--;
                     segundos = 59;
 
-                    if (minutos < 0)
+                    if (--minutos < 0)
                     {
-                        horas--;
                         minutos = 59;
 
-                        if (horas < 0)
+                        if (--horas < 0)
                         {
-                            // Tempo esgotado, parar o Timer
                             timer.Stop();
                             MessageBox.Show("Tempo esgotado!");
-                            TimerLbl.Text = "00:00:00";
+                            UpdateTimerLabel("00:00:00");
                             return;
                         }
                     }
                 }
 
-                // Atualizar a label
-                TimerLbl.Text = $"{Math.Max(horas, 0):D2}:{Math.Max(minutos, 0):D2}:{Math.Max(segundos, 0):D2}";
+                UpdateTimerLabel($"{horas:D2}:{minutos:D2}:{segundos:D2}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Internal Error: " + ex.Message);
-                Close();
+                MessageBox.Show("Erro interno: " + ex.Message);
             }
-
         }
+
+        private void UpdateTimerLabel(string text)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string>(UpdateTimerLabel), text);
+            }
+            else
+            {
+                TimerLbl.Text = text;
+            }
+        }
+
+
         public void setBackgroundImage(string FilePath)
         {
             if (FilePath != null)
@@ -126,6 +154,32 @@ namespace ArticTimer
                     BackColor = Color.Black;
                 }
             }
+        }
+        public void setTimerAxis(int[] axis)
+        {
+            TimerLbl.Location = new Point(axis[0], axis[1]);
+        }
+        private void TopMostConfig()
+        {
+            // Defina a propriedade TopMost para true
+            TopMost = true;
+
+            // Adicione o evento Activated para garantir que a form sempre está no topo quando ativada
+            Activated += (sender, e) => TopMost = true;
+        }
+        public void StopAll()
+        {
+            timer.Stop();
+            Close();
+            Dispose();
+        }
+        public void Pause()
+        {
+            timer.Stop();
+        }
+        public void Resume()
+        {
+            timer.Start();
         }
     }
 }

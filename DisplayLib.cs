@@ -1,5 +1,4 @@
-﻿using Bunifu.Framework.UI;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ArticTimer
@@ -53,11 +52,11 @@ namespace ArticTimer
             isAlreadyShowed = true;
         }
 
-        public static void showAvailableDisplays(Bunifu.UI.WinForms.BunifuDropdown BunifuCombo)
+        public static void showAvailableDisplays(ComboBox combo)
         {
             foreach (Screen screen in Screen.AllScreens)
             {
-                BunifuCombo.Items.Add(screen.DeviceName.Replace(@"\\.\", ""));
+                combo.Items.Add(screen.DeviceName.Replace(@"\\.\", ""));
             }
         }
     }
