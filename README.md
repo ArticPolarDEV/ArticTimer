@@ -2,9 +2,15 @@
 ArticPolarDEV Timer
 
 ## Version History
-# Lastest
-[0.1_alpha](https://github.com/ArticPolarDEV/ArticTimer/releases/tag/0.1_alpha)
+### Lastest
+[2.0_stable](https://github.com/ArticPolarDEV/ArticTimer/releases/tag/2.0_stable)
 
-**Warning: Various Bugs**
+**v2 Update**
 
-**Patch Update will be Released**
+### Changelog: 
+
+**_New UI Layout_**
+
+**_Fix Update (Bugs)_**
+
+**_New Functions Added_**
