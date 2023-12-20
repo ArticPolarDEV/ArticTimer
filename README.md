@@ -3,14 +3,18 @@ ArticPolarDEV Timer
 
 ## Version History
 ### Lastest
-[2.0_stable](https://github.com/ArticPolarDEV/ArticTimer/releases/tag/2.0_stable)
+[3.0_stable](https://github.com/ArticPolarDEV/ArticTimer/releases/tag/3.0_stable)
 
-**v2 Update**
+**v3 Stable**
 
 ### Changelog: 
 
-**_New UI Layout_**
+**_Removed Functions (not working on v2)_**
 
 **_Fix Update (Bugs)_**
 
-**_New Functions Added_**
+**_Load Config File Added_**
+
+**_Removed Timer Font (Crashing App!)_**
+
+**_Change in the structure of some parts of the changed code_**
