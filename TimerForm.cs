@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using System.IO;
 
@@ -17,18 +10,24 @@ namespace ArticTimer
     {
         private int horas, minutos, segundos;
         private Timer timer = new Timer();
-        public TimerForm(int hour, int minutes, int seconds, int[] Axis, string bgImage = null, string HexColor = "#ffffff", string FontPATH = null)
+
+        public TimerForm(int[] values, string[] datas)
         {
             InitializeComponent();
-            ConfigLabelFont(hour, minutes, seconds, HexColor, FontPATH);
-            startTemporizer();
-            setBackgroundImage(bgImage);
-            setTimerAxis(Axis);
-            TopMostConfig();
+            ConfigLabelFont(values, datas);
+            StartTemporizer();
+            SetBackgroundImage(datas);
+            SetTimerAxis(values);
         }
-        public void ConfigLabelFont(int hour, int minutes, int seconds, string HexColor, string FontPath)
+        public void ConfigLabelFont(int[] values, string[] datas)
         {
-            try
+            int hour = values.Length > 0 ? values[0] : 0;
+            int minutes = values.Length > 1 ? values[1] : 10;
+            int seconds = values.Length > 2 ? values[2] : 0;
+            int FontSize = values.Length > 3 ? values[3] : 135;
+            string HexColor = datas.Length > 0 ? datas[0] : "#ffffff";
+
+            /*try
             {
                 PrivateFontCollection pfc = new PrivateFontCollection();
                 FontFamily fontFamily;
@@ -44,22 +43,24 @@ namespace ArticTimer
                     fontFamily = pfc.Families[0];
                 }
 
-                Font DefaultFont = new Font(fontFamily, TimerLbl.Font.Size, FontStyle.Regular);
+                Font DefaultFont = new Font(fontFamily, FontSize, FontStyle.Regular);
                 TimerLbl.Font = DefaultFont;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred: " + ex.Message);
-            }
+            }*/
 
             string TimerText = $"{hour:D2}:{minutes:D2}:{seconds:D2}";
             TimerLbl.Text = TimerText;
+
             Color color = HexToColor(HexColor);
             TimerLbl.ForeColor = color;
         }
 
         private Color HexToColor(string hex)
         {
+            hex = hex.Replace(" ", "");
             // Remova o caractere '#' se estiver presente
             if (hex.StartsWith("#"))
                 hex = hex.Substring(1);
@@ -67,7 +68,7 @@ namespace ArticTimer
             // Converte a string hex em um objeto Color
             return ColorTranslator.FromHtml("#" + hex);
         }
-        private void startTemporizer()
+        private void StartTemporizer()
         {
             try
             {
@@ -75,9 +76,9 @@ namespace ArticTimer
                 string[] partesTempo = tempoLabel.Split(':');
 
                 if (partesTempo.Length == 3 &&
-                    int.TryParse(partesTempo[0], out horas) &&
-                    int.TryParse(partesTempo[1], out minutos) &&
-                    int.TryParse(partesTempo[2], out segundos))
+                  int.TryParse(partesTempo[0], out horas) &&
+                  int.TryParse(partesTempo[1], out minutos) &&
+                  int.TryParse(partesTempo[2], out segundos))
                 {
                     timer.Interval = 1000;
                     timer.Tick += TimerTick;
@@ -111,18 +112,32 @@ namespace ArticTimer
                         if (--horas < 0)
                         {
                             timer.Stop();
-                            MessageBox.Show("Tempo esgotado!");
-                            UpdateTimerLabel("00:00:00");
+                            MessageBox.Show("Time is over!");
+                            if (InvokeRequired)
+                            {
+                                Invoke(new Action(() => { UpdateTimerLabel(@"00:00:00"); }));
+                            }
+                            else
+                            {
+                                UpdateTimerLabel(@"00:00:00");
+                            }
                             return;
                         }
                     }
                 }
 
-                UpdateTimerLabel($"{horas:D2}:{minutos:D2}:{segundos:D2}");
+                if (InvokeRequired)
+                {
+                    Invoke(new Action(() => { UpdateTimerLabel($"{horas:D2}:{minutos:D2}:{segundos:D2}"); }));
+                }
+                else
+                {
+                    UpdateTimerLabel($"{horas:D2}:{minutos:D2}:{segundos:D2}");
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro interno: " + ex.Message);
+                MessageBox.Show("Error in TimerTick: " + ex.Message);
             }
         }
 
@@ -138,14 +153,13 @@ namespace ArticTimer
             }
         }
 
-
-        public void setBackgroundImage(string FilePath)
+        public void SetBackgroundImage(string[] datas)
         {
-            if (FilePath != null)
+            if (!string.IsNullOrEmpty(datas[1]))
             {
                 try
                 {
-                    BackgroundImage = Image.FromFile(FilePath);
+                    BackgroundImage = Image.FromFile(datas[1]);
                 }
                 catch (Exception ex)
                 {
@@ -155,31 +169,18 @@ namespace ArticTimer
                 }
             }
         }
-        public void setTimerAxis(int[] axis)
+        public void SetTimerAxis(int[] axis)
         {
-            TimerLbl.Location = new Point(axis[0], axis[1]);
+            TimerLbl.Location = new Point(axis[4], axis[5]);
+        }
+        private void ClosedForm(object sender, FormClosedEventArgs e)
+        {
+            timer.Stop();
         }
         private void TopMostConfig()
         {
-            // Defina a propriedade TopMost para true
             TopMost = true;
-
-            // Adicione o evento Activated para garantir que a form sempre está no topo quando ativada
             Activated += (sender, e) => TopMost = true;
-        }
-        public void StopAll()
-        {
-            timer.Stop();
-            Close();
-            Dispose();
-        }
-        public void Pause()
-        {
-            timer.Stop();
-        }
-        public void Resume()
-        {
-            timer.Start();
         }
     }
 }

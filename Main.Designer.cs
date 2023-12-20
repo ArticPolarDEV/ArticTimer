@@ -50,15 +50,13 @@
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.FontSizeNbr = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.TimerFontTxt = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.CloseTimer = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.PauseBtn = new System.Windows.Forms.Button();
-            this.ResumeBtn = new System.Windows.Forms.Button();
+            this.ReloadOutputs = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.secondsNmb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minutesNmb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hourNmb)).BeginInit();
@@ -66,9 +64,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.XAxis)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FontSizeNbr)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ReloadOutputs)).BeginInit();
             this.SuspendLayout();
             // 
             // StartTimerBtn
@@ -78,13 +77,13 @@
             this.StartTimerBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StartTimerBtn.Font = new System.Drawing.Font("Arial", 12F);
             this.StartTimerBtn.ForeColor = System.Drawing.Color.White;
-            this.StartTimerBtn.Location = new System.Drawing.Point(9, 26);
+            this.StartTimerBtn.Location = new System.Drawing.Point(9, 17);
             this.StartTimerBtn.Name = "StartTimerBtn";
             this.StartTimerBtn.Size = new System.Drawing.Size(61, 28);
             this.StartTimerBtn.TabIndex = 6;
             this.StartTimerBtn.Text = "Start";
             this.StartTimerBtn.UseVisualStyleBackColor = false;
-            this.StartTimerBtn.Click += new System.EventHandler(this.StartTimer);
+            this.StartTimerBtn.Click += new System.EventHandler(this.StartTimer_Click);
             // 
             // LabelSeconds
             // 
@@ -227,7 +226,7 @@
             // 
             // HexColorTxt
             // 
-            this.HexColorTxt.Location = new System.Drawing.Point(66, 72);
+            this.HexColorTxt.Location = new System.Drawing.Point(66, 46);
             this.HexColorTxt.Name = "HexColorTxt";
             this.HexColorTxt.Size = new System.Drawing.Size(119, 20);
             this.HexColorTxt.TabIndex = 15;
@@ -259,7 +258,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 75);
+            this.label2.Location = new System.Drawing.Point(4, 49);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 15;
@@ -268,7 +267,7 @@
             // DisplayCombo
             // 
             this.DisplayCombo.FormattingEnabled = true;
-            this.DisplayCombo.Location = new System.Drawing.Point(12, 32);
+            this.DisplayCombo.Location = new System.Drawing.Point(13, 32);
             this.DisplayCombo.Name = "DisplayCombo";
             this.DisplayCombo.Size = new System.Drawing.Size(130, 21);
             this.DisplayCombo.TabIndex = 15;
@@ -300,7 +299,7 @@
             this.groupBox1.Controls.Add(this.YAxis);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.ForeColor = System.Drawing.Color.White;
-            this.groupBox1.Location = new System.Drawing.Point(12, 193);
+            this.groupBox1.Location = new System.Drawing.Point(12, 162);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(156, 72);
             this.groupBox1.TabIndex = 19;
@@ -309,9 +308,8 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.button2);
-            this.groupBox2.Controls.Add(this.TimerFontTxt);
-            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.FontSizeNbr);
+            this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.HexColorTxt);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.BgPathTxt);
@@ -320,10 +318,36 @@
             this.groupBox2.ForeColor = System.Drawing.Color.White;
             this.groupBox2.Location = new System.Drawing.Point(174, 36);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(228, 125);
+            this.groupBox2.Size = new System.Drawing.Size(228, 106);
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Extras";
+            // 
+            // FontSizeNbr
+            // 
+            this.FontSizeNbr.Location = new System.Drawing.Point(66, 72);
+            this.FontSizeNbr.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.FontSizeNbr.Name = "FontSizeNbr";
+            this.FontSizeNbr.Size = new System.Drawing.Size(119, 20);
+            this.FontSizeNbr.TabIndex = 8;
+            this.FontSizeNbr.Value = new decimal(new int[] {
+            135,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 74);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(62, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Timer Size: ";
             // 
             // groupBox3
             // 
@@ -336,54 +360,37 @@
             this.groupBox3.ForeColor = System.Drawing.Color.White;
             this.groupBox3.Location = new System.Drawing.Point(12, 62);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(156, 125);
+            this.groupBox3.Size = new System.Drawing.Size(156, 94);
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Timer";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.button2);
+            this.groupBox4.Controls.Add(this.CloseTimer);
+            this.groupBox4.Controls.Add(this.StartTimerBtn);
+            this.groupBox4.ForeColor = System.Drawing.Color.White;
+            this.groupBox4.Location = new System.Drawing.Point(174, 148);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(222, 86);
+            this.groupBox4.TabIndex = 22;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Controls";
             // 
             // button2
             // 
             this.button2.BackColor = System.Drawing.Color.Transparent;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(191, 45);
+            this.button2.Location = new System.Drawing.Point(147, 14);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(31, 23);
-            this.button2.TabIndex = 16;
-            this.button2.Text = "...";
-            this.button2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button2.Size = new System.Drawing.Size(69, 62);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "Load Config";
             this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // TimerFontTxt
-            // 
-            this.TimerFontTxt.Location = new System.Drawing.Point(66, 46);
-            this.TimerFontTxt.Name = "TimerFontTxt";
-            this.TimerFontTxt.Size = new System.Drawing.Size(119, 20);
-            this.TimerFontTxt.TabIndex = 17;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 49);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(63, 13);
-            this.label7.TabIndex = 18;
-            this.label7.Text = "Timer Font: ";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.ResumeBtn);
-            this.groupBox4.Controls.Add(this.PauseBtn);
-            this.groupBox4.Controls.Add(this.CloseTimer);
-            this.groupBox4.Controls.Add(this.StartTimerBtn);
-            this.groupBox4.ForeColor = System.Drawing.Color.White;
-            this.groupBox4.Location = new System.Drawing.Point(174, 167);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(228, 98);
-            this.groupBox4.TabIndex = 22;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Controls";
+            this.button2.Click += new System.EventHandler(this.ReadConfigFile_Click);
             // 
             // CloseTimer
             // 
@@ -393,64 +400,32 @@
             this.CloseTimer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CloseTimer.Font = new System.Drawing.Font("Arial", 12F);
             this.CloseTimer.ForeColor = System.Drawing.Color.White;
-            this.CloseTimer.Location = new System.Drawing.Point(9, 58);
+            this.CloseTimer.Location = new System.Drawing.Point(9, 49);
             this.CloseTimer.Name = "CloseTimer";
             this.CloseTimer.Size = new System.Drawing.Size(61, 28);
             this.CloseTimer.TabIndex = 7;
             this.CloseTimer.Text = "Close";
             this.CloseTimer.UseVisualStyleBackColor = false;
-            this.CloseTimer.Click += new System.EventHandler(this.button3_Click);
+            this.CloseTimer.Click += new System.EventHandler(this.Button3_Click);
             // 
-            // pictureBox1
+            // ReloadOutputs
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(146, 32);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 23;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
-            // PauseBtn
-            // 
-            this.PauseBtn.BackColor = System.Drawing.Color.Transparent;
-            this.PauseBtn.Cursor = System.Windows.Forms.Cursors.Default;
-            this.PauseBtn.Enabled = false;
-            this.PauseBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.PauseBtn.Font = new System.Drawing.Font("Arial", 12F);
-            this.PauseBtn.ForeColor = System.Drawing.Color.White;
-            this.PauseBtn.Location = new System.Drawing.Point(143, 58);
-            this.PauseBtn.Name = "PauseBtn";
-            this.PauseBtn.Size = new System.Drawing.Size(79, 28);
-            this.PauseBtn.TabIndex = 8;
-            this.PauseBtn.Text = "Pause";
-            this.PauseBtn.UseVisualStyleBackColor = false;
-            this.PauseBtn.Click += new System.EventHandler(this.PauseBtn_Click);
-            // 
-            // ResumeBtn
-            // 
-            this.ResumeBtn.BackColor = System.Drawing.Color.Transparent;
-            this.ResumeBtn.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ResumeBtn.Enabled = false;
-            this.ResumeBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ResumeBtn.Font = new System.Drawing.Font("Arial", 12F);
-            this.ResumeBtn.ForeColor = System.Drawing.Color.White;
-            this.ResumeBtn.Location = new System.Drawing.Point(143, 26);
-            this.ResumeBtn.Name = "ResumeBtn";
-            this.ResumeBtn.Size = new System.Drawing.Size(79, 28);
-            this.ResumeBtn.TabIndex = 9;
-            this.ResumeBtn.Text = "Resume";
-            this.ResumeBtn.UseVisualStyleBackColor = false;
-            this.ResumeBtn.Click += new System.EventHandler(this.ResumeBtn_Click);
+            this.ReloadOutputs.Image = ((System.Drawing.Image)(resources.GetObject("ReloadOutputs.Image")));
+            this.ReloadOutputs.Location = new System.Drawing.Point(146, 32);
+            this.ReloadOutputs.Name = "ReloadOutputs";
+            this.ReloadOutputs.Size = new System.Drawing.Size(20, 20);
+            this.ReloadOutputs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.ReloadOutputs.TabIndex = 23;
+            this.ReloadOutputs.TabStop = false;
+            this.ReloadOutputs.Click += new System.EventHandler(this.ReloadOutputs_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(414, 277);
-            this.Controls.Add(this.pictureBox1);
+            this.ClientSize = new System.Drawing.Size(414, 243);
+            this.Controls.Add(this.ReloadOutputs);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -460,8 +435,6 @@
             this.Controls.Add(this.DisplayCombo);
             this.ForeColor = System.Drawing.Color.White;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(430, 316);
-            this.MinimumSize = new System.Drawing.Size(430, 316);
             this.Name = "Main";
             this.Text = "ArticTimer";
             ((System.ComponentModel.ISupportInitialize)(this.secondsNmb)).EndInit();
@@ -473,10 +446,11 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FontSizeNbr)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ReloadOutputs)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -505,14 +479,12 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox TimerFontTxt;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button CloseTimer;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button ResumeBtn;
-        private System.Windows.Forms.Button PauseBtn;
+        private System.Windows.Forms.PictureBox ReloadOutputs;
+        private System.Windows.Forms.NumericUpDown FontSizeNbr;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button2;
     }
 }
 

@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using SharpCompress.Archives;
+using SharpCompress.Archives.SevenZip;
+using System;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ArticTimer
 {
     public partial class Main : Form
     {
-        private TimerForm timerForm;
         public Main()
         {
             InitializeComponent();
@@ -14,36 +18,55 @@ namespace ArticTimer
         public void OnLoad()
         {
             DisplayLib.showAvailableDisplays(DisplayCombo);
+            ReloadOutputs.Cursor = Cursors.Hand;
+            // Replace "APTimer" with the specific name you want to match
+            string folderNameToMatch = "APTimer";
+
+            // Get the path to the TEMP directory
+            string tempPath = Path.GetTempPath();
+
+            // Get all subdirectories that contain the specified name
+            string[] matchingFolders = Directory.GetDirectories(tempPath, "*" + folderNameToMatch + "*");
+
+            // Delete each matching folder
+            foreach (string folder in matchingFolders)
+            {
+                try
+                {
+                    Directory.Delete(folder, true);
+                    Console.WriteLine($"Deleted folder: {folder}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting folder {folder}: {ex.Message}");
+                }
+            }
         }
-        private void StartTimer(object sender, EventArgs e)
+        private void StartTimer_Click(object sender, EventArgs e)
+        {
+            StartTimer();
+        }
+        private void StartTimer()
         {
             try
             {
-                string selectedItem = DisplayCombo.SelectedItem as string;
-
-                if (selectedItem != null && selectedItem.StartsWith("DISPLAY"))
+                if (DisplayCombo.SelectedItem is string selectedItem && selectedItem.StartsWith("DISPLAY"))
                 {
                     string numericPart = selectedItem.Replace("DISPLAY", "");
-
                     if (int.TryParse(numericPart, out int monitorNumber))
                     {
-                        string backgroundImagePath = BgPathTxt.Text;
                         int[] timerValues = GetTimerValues();
-
+                        string backgroundImagePath = BgPathTxt.Text;
                         Console.WriteLine($"Timer Values: {timerValues[0]} hours, {timerValues[1]} minutes, {timerValues[2]} seconds");
                         StartTimerBtn.Enabled = false;
                         CloseTimer.Enabled = true;
-                        ResumeBtn.Enabled = true;
-                        PauseBtn.Enabled = true;
-                        if (string.IsNullOrEmpty(backgroundImagePath))
+                        if (!string.IsNullOrEmpty(backgroundImagePath))
                         {
-                            timerForm = CreateTimerForm(timerValues, null);
-                            DisplayLib.showOnMonitor(monitorNumber, timerForm);
+                            DisplayLib.showOnMonitor(monitorNumber, CreateTimerForm(backgroundImagePath));
                         }
                         else
                         {
-                            timerForm = CreateTimerForm(timerValues, backgroundImagePath);
-                            DisplayLib.showOnMonitor(monitorNumber, timerForm);
+                            DisplayLib.showOnMonitor(monitorNumber, CreateTimerForm(null));
                         }
                     }
                     else
@@ -61,29 +84,37 @@ namespace ArticTimer
                 MessageBox.Show("Erro: " + ex.Message);
             }
         }
-
-
-        private TimerForm CreateTimerForm(int[] timerValues, string backgroundImagePath)
+        private TimerForm CreateTimerForm(string bg)
         {
             string hexColor = HexColorTxt.Text;
-            string TimerFontPath = TimerFontTxt.Text;
             int[] axis = GetAxis();
-            return new TimerForm(timerValues[0], timerValues[1], timerValues[2], axis, backgroundImagePath, hexColor, TimerFontPath);
+            int[] TimerValues = GetTimerValues();
+            int[] values = {
+                TimerValues[0],
+                TimerValues[1],
+                TimerValues[2],
+                TimerValues[3],
+                axis[0],
+                axis[1]
+            };
+            string[] datas = {
+                hexColor,
+                bg
+            };
+            return new TimerForm(values, datas);
         }
-
         private int[] GetTimerValues()
         {
-            return new int[]
-            {
+            return new int[] {
                 int.Parse(hourNmb.Value.ToString()),
                 int.Parse(minutesNmb.Value.ToString()),
-                int.Parse(secondsNmb.Value.ToString())
+                int.Parse(secondsNmb.Value.ToString()),
+                int.Parse(FontSizeNbr.Value.ToString())
             };
         }
         private int[] GetAxis()
         {
-            return new int[]
-            {
+            return new int[] {
                 int.Parse(XAxis.Value.ToString()),
                 int.Parse(YAxis.Value.ToString())
             };
@@ -96,79 +127,126 @@ namespace ArticTimer
                 ofd.Multiselect = false;
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    // Get the selected file name and display it
                     string fileName = ofd.FileName;
-
-                    // Now you can do something with the selected file, like setting it as a background image
-                    // For example, if you have a PictureBox named pictureBox1:
                     BgPathTxt.Text = fileName;
                 }
             }
         }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            if (Application.OpenForms["TimerForm"] != null)
             {
-                ofd.Filter = "Font Files|*.ttf;*.otf";
-                ofd.Multiselect = false;
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    // Get the selected file name and display it
-                    string fileName = ofd.FileName;
-
-                    // Now you can do something with the selected file, like setting it as a background image
-                    // For example, if you have a PictureBox named pictureBox1:
-                    TimerFontTxt.Text = fileName;
-                }
+                StartTimerBtn.Enabled = true;
+                CloseTimer.Enabled = false;
+                Application.OpenForms["TimerForm"].Close();
+            }
+            else
+            {
+                MessageBox.Show("The timer hasn't been opened yet!");
             }
         }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            StartTimerBtn.Enabled = true;
-            CloseTimer.Enabled = false;
-            ResumeBtn.Enabled = false;
-            PauseBtn.Enabled = false;
-            // Verifique se a instância da TimerForm foi criada e não foi descartada
-            if (timerForm != null && !timerForm.IsDisposed)
-            {
-                // Chame o método StopAll na TimerForm
-                timerForm.StopAll();
-            }
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void ReloadOutputs_Click(object sender, EventArgs e)
         {
             DisplayCombo.Items.Clear();
             OnLoad();
         }
-
-        private void ResumeBtn_Click(object sender, EventArgs e)
+        public void ReadConfigFile_Click(object sender, EventArgs e)
         {
-            StartTimerBtn.Enabled = false;
-            CloseTimer.Enabled = true;
-            ResumeBtn.Enabled = false;
-            PauseBtn.Enabled = true;
-            // Verifique se a instância da TimerForm foi criada e não foi descartada
-            if (timerForm != null && !timerForm.IsDisposed)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                // Chame o método StopAll na TimerForm
-                timerForm.Resume();
+                ofd.Filter = "Config File|*.json;*.aptimer";
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    ReadConfig(ofd.FileName, ofd.SafeFileName);
+                }
             }
         }
-
-        private void PauseBtn_Click(object sender, EventArgs e)
+        public void ReadConfig(string filename, string safeFilename)
         {
-            StartTimerBtn.Enabled = false;
-            CloseTimer.Enabled = true;
-            ResumeBtn.Enabled = true;
-            PauseBtn.Enabled = false;
-            // Verifique se a instância da TimerForm foi criada e não foi descartada
-            if (timerForm != null && !timerForm.IsDisposed)
+            if (Path.GetExtension(safeFilename) == ".json")
             {
-                // Chame o método StopAll na TimerForm
-                timerForm.Pause();
+                string jsonText = @File.ReadAllText(filename);
+                JObject jsonObject = JObject.Parse(jsonText);
+                string jsonFolder = filename.Replace($@"\{safeFilename}", "");
+
+                int display = (int)jsonObject["display"] - 1;
+                int axisX = (int)jsonObject["axis"]["x"];
+                int axisY = (int)jsonObject["axis"]["y"];
+                int timerHours = (int)jsonObject["timer"]["hours"];
+                int timerMinutes = (int)jsonObject["timer"]["minutes"];
+                int timerSeconds = (int)jsonObject["timer"]["seconds"];
+                string backgroundImage = (string)jsonObject["extra"]["bg"];
+                string bgFullPath = backgroundImage.Replace("$ThisPath", jsonFolder);
+                string textColor = (string)jsonObject["extra"]["color"];
+                int fontSize = (int)jsonObject["extra"]["size"];
+                bool autoStart = (bool)jsonObject["extra"]["autostart"];
+
+                DisplayCombo.SelectedIndex = display;
+                XAxis.Value = axisX;
+                YAxis.Value = axisY;
+                hourNmb.Value = timerHours;
+                minutesNmb.Value = timerMinutes;
+                secondsNmb.Value = timerSeconds;
+                BgPathTxt.Text = bgFullPath;
+                HexColorTxt.Text = textColor;
+                FontSizeNbr.Value = fontSize;
+                if (autoStart)
+                {
+                    StartTimer();
+                }
+            } 
+            else if (Path.GetExtension(safeFilename) == ".aptimer")
+            {
+                Random rdm = new Random();
+                int rdmNumber = rdm.Next(100);
+                string extractDirectory = $@"{Path.GetTempPath()}\APTimer{rdmNumber.ToString()}";
+                if (!Directory.Exists(extractDirectory))
+                {
+                    Directory.CreateDirectory(extractDirectory);
+                }
+                using (var archive = SevenZipArchive.Open(filename))
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (!entry.IsDirectory)
+                        {
+                            entry.WriteToDirectory(extractDirectory, new SharpCompress.Common.ExtractionOptions()
+                            {
+                                ExtractFullPath = true,
+                                Overwrite = true
+                            });
+                        }
+                    }
+                }
+                string jsonText = @File.ReadAllText($@"{extractDirectory}\aptimerConfig.json");
+                JObject jsonObject = JObject.Parse(jsonText);
+
+                int display = (int)jsonObject["display"] - 1;
+                int axisX = (int)jsonObject["axis"]["x"];
+                int axisY = (int)jsonObject["axis"]["y"];
+                int timerHours = (int)jsonObject["timer"]["hours"];
+                int timerMinutes = (int)jsonObject["timer"]["minutes"];
+                int timerSeconds = (int)jsonObject["timer"]["seconds"];
+                string backgroundImage = (string)jsonObject["extra"]["bg"];
+                string bgFullPath = backgroundImage.Replace("$ThisPath", extractDirectory);
+                string textColor = (string)jsonObject["extra"]["color"];
+                int fontSize = (int)jsonObject["extra"]["size"];
+                bool autoStart = (bool)jsonObject["extra"]["autostart"];
+
+                DisplayCombo.SelectedIndex = display;
+                XAxis.Value = axisX;
+                YAxis.Value = axisY;
+                hourNmb.Value = timerHours;
+                minutesNmb.Value = timerMinutes;
+                secondsNmb.Value = timerSeconds;
+                BgPathTxt.Text = bgFullPath;
+                HexColorTxt.Text = textColor;
+                FontSizeNbr.Value = fontSize;
+                if (autoStart)
+                {
+                    StartTimer();
+                }
             }
         }
     }
