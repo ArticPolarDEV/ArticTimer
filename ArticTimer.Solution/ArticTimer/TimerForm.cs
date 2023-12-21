@@ -18,6 +18,7 @@ namespace ArticTimer
             StartTemporizer();
             SetBackgroundImage(datas);
             SetTimerAxis(values);
+            TopMostConfig();
         }
         public void ConfigLabelFont(int[] values, string[] datas)
         {
