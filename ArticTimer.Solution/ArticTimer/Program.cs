@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
@@ -20,28 +21,24 @@ namespace ArticTimer
             try
             {
                 string ConfigPath = (args.Length > 0) ? args[0] : null;
+                bool autoMode = args.Contains("/auto");
+
                 if (ConfigPath != null)
                 {
-                    if (IsValidPath(ConfigPath))
-                    {
-                        Application.Run(new Main(ConfigPath));
-                    }
-                    else
-                    {
-                        Application.Run(new Main(null));
-                    }
+                    Application.Run(new Main(ConfigPath, autoMode));
                 }
                 else
                 {
-                    Application.Run(new Main(null));
+                    Application.Run(new Main(null, autoMode));
                 }
             }
-            catch (Exception ex)
+            catch //(Exception ex)
             {
-                MessageBox.Show($"In Program.cs - Exception: {ex.Message}");
+                //MessageBox.Show($"In Program.cs - Exception: {ex.Message}");
             }
         }
-        static bool IsValidPath(string path)
+
+        /*static bool IsValidPath(string path)
         {
             try
             {
@@ -50,14 +47,14 @@ namespace ArticTimer
                     return true;
                 }
                 else
-                { 
-                    return false; 
+                {
+                    return false;
                 }
             }
             catch (Exception)
             {
                 return false;
             }
-        }
+        }*/
     }
 }

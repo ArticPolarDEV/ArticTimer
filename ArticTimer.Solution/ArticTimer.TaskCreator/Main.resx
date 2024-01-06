@@ -118,15 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="ReloadOutputs.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAANpJREFUWEe9
-        zUGOxDAIBMD8/9OzUlSyBxHPOjhxHWlojqrPF6N9/G2M3+dfIn6XX5esvMefac7W6StTU6dnmbo6PUtU
-        1elZoqpOTyI+GQ1ZW6OrMW6ML1lZp+9klIgT8fv8S8R7+JmI9/AzEO3hZyDaw89AtIefgagzb4wfoTIQ
-        deaN8SNUBqLOPBAtUxeIOvNAtExdIOrME3GZmkTcmSfiEhWJOJMn4tucJ+JMfsnKFCeXrIzZG7I2ZG3I
-        2m92p9zZP8tnuXmM2nvcLlNXo6NExXP0/sv6hOP4AxmbgsQhu++LAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAkAAAAAAAEAIACwNQAAlgAAAICAAAABACAAKAgBAEY2AABgYAAAAQAgAKiUAABuPgEASEgAAAEA

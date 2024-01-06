@@ -9,14 +9,14 @@ namespace ArticTimer
 {
     public partial class Main : Form
     {
-        public Main(string filename = null)
+        public Main(string filename = null, bool autoMode = false)
         {
             
             InitializeComponent();
             if (filename != null)
             {
                 OnLoad();
-                ReadConfig(filename, Path.GetFileName(filename));
+                ReadConfig(filename, Path.GetFileName(filename), autoMode);
             }
             else
             {
@@ -173,11 +173,11 @@ namespace ArticTimer
                 ofd.Multiselect = false;
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    ReadConfig(ofd.FileName, ofd.SafeFileName);
+                    ReadConfig(ofd.FileName, ofd.SafeFileName, false);
                 }
             }
         }
-        public void ReadConfig(string filename, string safeFilename)
+        public void ReadConfig(string filename, string safeFilename, bool autoMode)
         {
             if (Path.GetExtension(safeFilename) == ".json")
             {
@@ -206,11 +206,12 @@ namespace ArticTimer
                 BgPathTxt.Text = bgFullPath;
                 HexColorTxt.Text = textColor;
                 FontSizeNbr.Value = fontSize;
-                if (autoStart)
+                if (autoStart || autoMode)
                 {
                     StartTimer();
                 }
-            } 
+
+            }
             else if (Path.GetExtension(safeFilename) == ".aptimer")
             {
                 Random rdm = new Random();
@@ -258,7 +259,7 @@ namespace ArticTimer
                 BgPathTxt.Text = bgFullPath;
                 HexColorTxt.Text = textColor;
                 FontSizeNbr.Value = fontSize;
-                if (autoStart)
+                if (autoStart || autoMode)
                 {
                     StartTimer();
                 }
@@ -296,8 +297,7 @@ namespace ArticTimer
                         string numericPart = selectedItem.Replace("DISPLAY", "");
                         if (int.TryParse(numericPart, out int monitorNumber))
                         {
-
-                            LiveOnForm prevForm = new LiveOnForm(monitorNumber);
+                            LiveOnForm prevForm = new LiveOnForm();
                             prevForm.Show();
                         }
                         else
